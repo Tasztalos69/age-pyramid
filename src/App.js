@@ -1,6 +1,8 @@
 import React from "react";
 import "./App.css";
 import axios from "axios";
+import * as THREE from "three";
+import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
 
 export default class App extends React.Component {
 	constructor(props) {
@@ -60,6 +62,59 @@ export default class App extends React.Component {
 	handleYearChange = (e) => {
 		this.setState({ [e.target.name]: e.target.value });
 	};
+	initGraph(e) {
+		e.preventDefault();
+		console.log("Show graph");
+		const scene = new THREE.Scene();
+		scene.background = new THREE.Color(0xffffff);
+		const camera = new THREE.PerspectiveCamera(
+			75,
+			window.innerWidth / window.innerHeight,
+			0.1,
+			1000
+		);
+		const renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer.setSize(window.innerWidth, window.innerHeight);
+
+		document.body.appendChild(renderer.domElement);
+
+		const geometry = new THREE.BoxGeometry(3, 3, 3);
+		const material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+		const cube = new THREE.Mesh(geometry, material);
+		scene.add(cube);
+
+		camera.position.z = 5;
+
+		const controls = new TrackballControls(camera, renderer.domElement);
+		controls.rotateSpeed = 15.0;
+		controls.zoomSpeed = 1.2;
+		controls.panSpeed = 0.8;
+		controls.keys = [65, 83, 68];
+		controls.maxDistance = 10;
+		controls.minDistance = 4;
+		// controls.target.set(0, 0, 0);
+		controls.addEventListener("change", () => {
+			console.log("Changed");
+
+			renderer.render(scene, camera);
+		});
+
+		const animate = () => {
+			requestAnimationFrame(animate);
+			controls.update();
+			renderer.render(scene, camera);
+		};
+		animate();
+		window.addEventListener(
+			"resize",
+			() => {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+			},
+			false
+		);
+	}
 	render() {
 		return (
 			<div className='App'>
@@ -120,7 +175,7 @@ export default class App extends React.Component {
 						min: {this.state.years[0].name} - max:{" "}
 						{this.state.years[this.state.years.length - 1].name}
 					</p>
-					<input type='submit' value='Submit' />
+					<input type='submit' value='Submit' onClick={this.initGraph} />
 				</form>
 				<footer>
 					<p>
