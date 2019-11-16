@@ -5,7 +5,13 @@ import axios from "axios";
 export default class App extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = { countries: [], years: [] };
+		this.state = {
+			countries: [],
+			years: [],
+			countryInput: "",
+			matchedCountries: [],
+			selectedCountry: null
+		};
 	}
 
 	componentDidMount() {
@@ -30,16 +36,49 @@ export default class App extends React.Component {
 			this.setState({ years: yrs });
 		});
 	}
+
+	searchCountry = (e) => {
+		this.setState({ countryInput: e.target.value });
+		if (e.target.value === null || e.target.value === "" || e.target.value === undefined) {
+			this.setState({ matchedCountries: [] });
+		} else {
+			const regex = new RegExp(`^${e.target.value}`, "gi");
+			let matchedCountries = this.state.countries.filter((cnt) => {
+				return cnt.name.match(regex);
+			});
+			this.setState({ matchedCountries: matchedCountries });
+		}
+	};
 	render() {
 		return (
 			<div className='App'>
 				<h1>Age pyramid</h1>
 
-				<ul>
-					{this.state.years.map((country) => {
-						return <li>{country.name}</li>;
-					})}
-				</ul>
+				<form>
+					<input
+						type='text'
+						name='country'
+						value={this.state.countryInput}
+						onChange={this.searchCountry}
+						autoFocus
+						autoComplete='off'
+						required
+					/>
+					<ul>
+						{this.state.matchedCountries.map((cnt) => {
+							return (
+								<li
+									key={cnt.id}
+									onClick={() => {
+										this.setState({ selectedCountry: cnt.id });
+									}}
+								>
+									{cnt.name}
+								</li>
+							);
+						})}
+					</ul>
+				</form>
 				<footer>
 					<p>
 						Created by BMK. <br /> Licensed under MIT License.
