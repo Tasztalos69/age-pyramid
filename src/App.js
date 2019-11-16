@@ -25,7 +25,6 @@ export default class App extends React.Component {
 					</p>
 				</footer>
 			</div>
-			// GPG test
 		);
 	}
 }
