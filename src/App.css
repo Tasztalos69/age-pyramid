@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css?family=Major+Mono+Display|Open+Sans&display=swap");
+
 html {
 	margin: 0;
 	padding: 0;
@@ -7,6 +9,16 @@ input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
 	-webkit-appearance: none;
 	margin: 0;
+}
+
+* {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Opera and Firefox */
 }
 
 input[type="number"] {
@@ -27,12 +39,29 @@ h1 {
 	color: #0000ff;
 }
 
+canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: -1;
+	cursor: grab;
+}
+
 footer {
 	position: absolute;
 	bottom: 1%;
 	right: 1%;
+	font-family: "Major Mono display";
+	text-transform: lowercase;
 }
 
 footer p {
 	text-align: right;
+	margin: 0;
+	padding: 0;
+}
+
+footer hr {
+	margin: 0;
+	padding: 0;
 }

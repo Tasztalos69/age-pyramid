@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 import axios from "axios";
 import * as THREE from "three";
-import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 export default class App extends React.Component {
 	constructor(props) {
@@ -62,9 +62,10 @@ export default class App extends React.Component {
 	handleYearChange = (e) => {
 		this.setState({ [e.target.name]: e.target.value });
 	};
-	initGraph(e) {
+	async initGraph(e) {
 		e.preventDefault();
-		console.log("Show graph");
+
+		// Create main setup
 		const scene = new THREE.Scene();
 		scene.background = new THREE.Color(0xffffff);
 		const camera = new THREE.PerspectiveCamera(
@@ -75,36 +76,125 @@ export default class App extends React.Component {
 		);
 		const renderer = new THREE.WebGLRenderer({ antialias: true });
 		renderer.setSize(window.innerWidth, window.innerHeight);
-
 		document.body.appendChild(renderer.domElement);
-
-		const geometry = new THREE.BoxGeometry(3, 3, 3);
-		const material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
-		const cube = new THREE.Mesh(geometry, material);
-		scene.add(cube);
-
 		camera.position.z = 5;
 
-		const controls = new TrackballControls(camera, renderer.domElement);
-		controls.rotateSpeed = 15.0;
-		controls.zoomSpeed = 1.2;
-		controls.panSpeed = 0.8;
-		controls.keys = [65, 83, 68];
-		controls.maxDistance = 10;
-		controls.minDistance = 4;
-		// controls.target.set(0, 0, 0);
-		controls.addEventListener("change", () => {
-			console.log("Changed");
+		// Create center separator
+		const centerLineGeometry = new THREE.BoxGeometry(0.03, 3, 5);
+		const materialBlack = new THREE.MeshBasicMaterial({ color: 0x101010 });
+		const centerLine = new THREE.Mesh(centerLineGeometry, materialBlack);
+		scene.add(centerLine);
 
-			renderer.render(scene, camera);
+		//----------------------
+		// Create pyramid
+		//----------------------
+
+		// request configuration
+		let config = {
+				headers: { Accept: "text/json" }
+			},
+			statsF = [],
+			statsM = [];
+
+		// Generate arrays
+		for (let i = 0; i < 21; i++) {
+			statsM[i] = [];
+			statsF[i] = [];
+		}
+
+		// Year loop fn
+		const loopYears = (sex, observations, placement) => {
+			for (
+				let i = 0;
+				i < parseInt(this.state.yearEnd) - (parseInt(this.state.yearStart) - 1);
+				i++
+			) {
+				let intake = observations[Object.keys(observations)[i]][0];
+				if (sex === "M") {
+					statsM[placement][i] = intake;
+				} else {
+					statsF[placement][i] = intake;
+				}
+			}
+		};
+
+		// Main url
+		let mainUrl = `https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5+Y5T10+Y10T14+Y15T19+Y20T24+Y25T29+Y30T34+Y35T39+Y40T44+Y45T49+Y50T54+Y55T59+Y60T64+Y65T69+Y70T74+Y75T79+Y80T84+Y85T89+Y90T94+Y95T99+Y_GE100.M._T.001.M?startPeriod=${this.state.yearStart}&endPeriod=${this.state.yearEnd}`;
+
+		await axios.get(mainUrl, config).then((res) => {
+			let series = res.data.dataSets[0].series;
+			for (let age = 0; age < 21; age++) {
+				let observations = series[Object.keys(series)[age]].observations;
+				if (age === 0) {
+					loopYears("M", observations, 20);
+				} else if (age === 1) {
+					loopYears("M", observations, 0);
+				} else if (age === 12) {
+					loopYears("M", observations, 1);
+				} else if (age <= 11) {
+					loopYears("M", observations, age);
+				} else {
+					loopYears("M", observations, age - 1);
+				}
+			}
 		});
 
+		mainUrl = `https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5+Y5T10+Y10T14+Y15T19+Y20T24+Y25T29+Y30T34+Y35T39+Y40T44+Y45T49+Y50T54+Y55T59+Y60T64+Y65T69+Y70T74+Y75T79+Y80T84+Y85T89+Y90T94+Y95T99+Y_GE100.F._T.001.M?startPeriod=${this.state.yearStart}&endPeriod=${this.state.yearEnd}`;
+		await axios.get(mainUrl, config).then((res) => {
+			let series = res.data.dataSets[0].series;
+			for (let age = 0; age < 21; age++) {
+				let observations = series[Object.keys(series)[age]].observations;
+				if (age === 0) {
+					loopYears("F", observations, 20);
+				} else if (age === 1) {
+					loopYears("F", observations, 0);
+				} else if (age === 12) {
+					loopYears("F", observations, 1);
+				} else if (age <= 11) {
+					loopYears("F", observations, age);
+				} else {
+					loopYears("F", observations, age - 1);
+				}
+			}
+		});
+
+		// Get the longest value
+		var maxRowM = statsM.map((row) => {
+			return Math.max.apply(Math, row);
+		});
+		var maxM = Math.max.apply(null, maxRowM);
+		var maxRowF = statsM.map((row) => {
+			return Math.max.apply(Math, row);
+		});
+		var maxF = Math.max.apply(null, maxRowF);
+		var max = Math.max(maxM, maxF);
+
+		for (let i = 0; i < statsM.length; i++) {
+			console.group(`StatsM ${i}`);
+			for (let j = 0; j < statsM[i].length; j++) {
+				console.log(statsM[i][j]);
+			}
+			console.groupEnd();
+		}
+
+		// Add Orbit controller
+		const controls = new OrbitControls(camera, renderer.domElement);
+		controls.rotateSpeed = 0.5;
+		controls.zoomSpeed = 1.2;
+		controls.panSpeed = 0.8;
+		controls.maxDistance = 10;
+		controls.minDistance = 4;
+		controls.enableDamping = true;
+
+		// Render the scene
 		const animate = () => {
 			requestAnimationFrame(animate);
 			controls.update();
 			renderer.render(scene, camera);
 		};
 		animate();
+
+		// Handle resizing
 		window.addEventListener(
 			"resize",
 			() => {
@@ -175,11 +265,32 @@ export default class App extends React.Component {
 						min: {this.state.years[0].name} - max:{" "}
 						{this.state.years[this.state.years.length - 1].name}
 					</p>
-					<input type='submit' value='Submit' onClick={this.initGraph} />
+					<input
+						type='submit'
+						value='Submit'
+						onClick={this.initGraph.bind(this)}
+					/>
 				</form>
 				<footer>
 					<p>
-						Created by BMK. <br /> Licensed under MIT License.
+						Current Country: <b>{this.state.selectedCountry}</b>
+						<br />
+						Current Years:{" "}
+						<b>
+							{this.state.yearStart} - {this.state.yearEnd}
+						</b>
+						<br />
+						<span
+							onClick={() => {
+								console.log("reset");
+							}}
+						>
+							<b>Reset view</b>
+						</span>
+					</p>
+					<hr />
+					<p>
+						Created by BMK. <br /> Licensed under <b>MIT</b> License.
 					</p>
 				</footer>
 			</div>
