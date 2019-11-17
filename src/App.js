@@ -123,27 +123,34 @@ export default class App extends React.Component {
 		};
 
 		// Main url
-		let mainUrl = `https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5+Y5T10+Y10T14+Y15T19+Y20T24+Y25T29+Y30T34+Y35T39+Y40T44+Y45T49+Y50T54+Y55T59+Y60T64+Y65T69+Y70T74+Y75T79+Y80T84+Y85T89+Y90T94+Y95T99+Y_GE100.M._T.001.M?startPeriod=${this.state.yearStart}&endPeriod=${this.state.yearEnd}`;
+		let mainUrl = `https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5+Y5T10+Y10T14+Y15T19+Y20T24+Y25T29+Y30T34+Y35T39+Y40T44+Y45T49+Y50T54+Y55T59+Y60T64+Y65T69+Y70T74+Y75T79+Y80T84+Y85T89+Y90T94+Y95T99+Y_GE100.M._T.${parseInt(
+			this.state.selectedCountryId
+		)}.M?startPeriod=${this.state.yearStart}&endPeriod=${this.state.yearEnd}`;
 
-		await axios.get(mainUrl, config).then((res) => {
-			let series = res.data.dataSets[0].series;
-			for (let age = 0; age < 21; age++) {
-				let observations = series[Object.keys(series)[age]].observations;
-				if (age === 0) {
-					loopYears("M", observations, 20);
-				} else if (age === 1) {
-					loopYears("M", observations, 0);
-				} else if (age === 12) {
-					loopYears("M", observations, 1);
-				} else if (age <= 11) {
-					loopYears("M", observations, age);
-				} else {
-					loopYears("M", observations, age - 1);
+		await axios
+			.get(mainUrl, config)
+			.then((res) => {
+				let series = res.data.dataSets[0].series;
+				for (let age = 0; age < 21; age++) {
+					let observations = series[Object.keys(series)[age]].observations;
+					if (age === 0) {
+						loopYears("M", observations, 20);
+					} else if (age === 1) {
+						loopYears("M", observations, 0);
+					} else if (age === 12) {
+						loopYears("M", observations, 1);
+					} else if (age <= 11) {
+						loopYears("M", observations, age);
+					} else {
+						loopYears("M", observations, age - 1);
+					}
 				}
-			}
-		});
+			})
+			.catch((err) => console.log(err));
 
-		mainUrl = `https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5+Y5T10+Y10T14+Y15T19+Y20T24+Y25T29+Y30T34+Y35T39+Y40T44+Y45T49+Y50T54+Y55T59+Y60T64+Y65T69+Y70T74+Y75T79+Y80T84+Y85T89+Y90T94+Y95T99+Y_GE100.F._T.001.M?startPeriod=${this.state.yearStart}&endPeriod=${this.state.yearEnd}`;
+		mainUrl = `https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5+Y5T10+Y10T14+Y15T19+Y20T24+Y25T29+Y30T34+Y35T39+Y40T44+Y45T49+Y50T54+Y55T59+Y60T64+Y65T69+Y70T74+Y75T79+Y80T84+Y85T89+Y90T94+Y95T99+Y_GE100.F._T.${parseInt(
+			this.state.selectedCountryId
+		)}.M?startPeriod=${this.state.yearStart}&endPeriod=${this.state.yearEnd}`;
 		await axios.get(mainUrl, config).then((res) => {
 			let series = res.data.dataSets[0].series;
 			for (let age = 0; age < 21; age++) {
@@ -180,25 +187,43 @@ export default class App extends React.Component {
 		const texLong = new THREE.MeshBasicMaterial({
 			map: new THREE.TextureLoader().load("texture_long.png")
 		});
-
-		const dashMaterial = [
-			texShort,
-			texShort,
-			texLong,
-			texLong,
-			texLong,
-			texLong
-		];
-		// const dashMaterial = new THREE.MeshBasicMaterial({
-		// 	color: 0x5aa300
-		// });
+		const texMed = new THREE.MeshBasicMaterial({
+			map: new THREE.TextureLoader().load("texture_med.png")
+		});
+		const texMedLow = new THREE.MeshBasicMaterial({
+			map: new THREE.TextureLoader().load("texture_med_low.png")
+		});
 
 		// Display Males
 		for (let i = 0; i < statsM.length; i++) {
 			for (let j = 0; j < statsM[i].length; j++) {
 				let width = (statsM[i][j] / max) * 3;
 				let dashGeom = new THREE.BoxGeometry(width, 0.1, 0.05);
-				let dash = new THREE.Mesh(dashGeom, dashMaterial);
+				let dashMat;
+				if (width > 2) {
+					dashMat = [texShort, texShort, texLong, texLong, texLong, texLong];
+				} else if (width > 1) {
+					dashMat = [texShort, texShort, texMed, texMed, texMed, texMed];
+				} else if (width > 0.1) {
+					dashMat = [
+						texShort,
+						texShort,
+						texMedLow,
+						texMedLow,
+						texMedLow,
+						texMedLow
+					];
+				} else {
+					dashMat = [
+						texShort,
+						texShort,
+						texShort,
+						texShort,
+						texShort,
+						texShort
+					];
+				}
+				let dash = new THREE.Mesh(dashGeom, dashMat);
 				group.add(dash);
 				dash.position.set(width / -2 - 0.016, -1 + i * 0.1, 0 + j * -0.05);
 			}
@@ -209,7 +234,31 @@ export default class App extends React.Component {
 			for (let j = 0; j < statsF[i].length; j++) {
 				let width = (statsF[i][j] / max) * 3;
 				let dashGeom = new THREE.BoxGeometry(width, 0.1, 0.05);
-				let dash = new THREE.Mesh(dashGeom, dashMaterial);
+				let dashMat;
+				if (width > 2) {
+					dashMat = [texShort, texShort, texLong, texLong, texLong, texLong];
+				} else if (width > 1) {
+					dashMat = [texShort, texShort, texMed, texMed, texMed, texMed];
+				} else if (width > 0.1) {
+					dashMat = [
+						texShort,
+						texShort,
+						texMedLow,
+						texMedLow,
+						texMedLow,
+						texMedLow
+					];
+				} else {
+					dashMat = [
+						texShort,
+						texShort,
+						texShort,
+						texShort,
+						texShort,
+						texShort
+					];
+				}
+				let dash = new THREE.Mesh(dashGeom, dashMat);
 				group.add(dash);
 				dash.position.set(width / 2 + 0.015, -1 + i * 0.1, 0 + j * -0.05);
 			}
