@@ -67,6 +67,7 @@ export default class App extends React.Component {
 
 		// Create main setup
 		const scene = new THREE.Scene();
+		const group = new THREE.Group();
 		scene.background = new THREE.Color(0xffffff);
 		const camera = new THREE.PerspectiveCamera(
 			75,
@@ -89,15 +90,21 @@ export default class App extends React.Component {
 			},
 			statsF = [],
 			statsM = [];
-		const dashMaterial = new THREE.MeshBasicMaterial({
-			color: 0x5aa300
-		});
 
 		// Generate arrays
 		for (let i = 0; i < 21; i++) {
 			statsM[i] = [];
 			statsF[i] = [];
 		}
+
+		// Create center separator
+		let lineZ =
+			(parseInt(this.state.yearEnd) - parseInt(this.state.yearStart)) * 0.05 +
+			0.05;
+		const centerLineGeometry = new THREE.BoxGeometry(0.03, 2.1, lineZ);
+		const materialBlack = new THREE.MeshBasicMaterial({ color: 0x101010 });
+		const centerLine = new THREE.Mesh(centerLineGeometry, materialBlack);
+		scene.add(centerLine);
 
 		// Year loop fn
 		const loopYears = (sex, observations, placement) => {
@@ -166,22 +173,52 @@ export default class App extends React.Component {
 		var maxF = Math.max.apply(null, maxRowF);
 		var max = Math.max(maxM, maxF);
 
-		const centerLineGeometry = new THREE.BoxGeometry(0.03, 2.1, 0.05);
-		const materialBlack = new THREE.MeshBasicMaterial({ color: 0x101010 });
-		const centerLine = new THREE.Mesh(centerLineGeometry, materialBlack);
+		const texShort = new THREE.MeshBasicMaterial({
+			map: new THREE.TextureLoader().load("texture_short.png")
+		});
+
+		const texLong = new THREE.MeshBasicMaterial({
+			map: new THREE.TextureLoader().load("texture_long.png")
+		});
+
+		const dashMaterial = [
+			texShort,
+			texShort,
+			texLong,
+			texLong,
+			texLong,
+			texLong
+		];
+		// const dashMaterial = new THREE.MeshBasicMaterial({
+		// 	color: 0x5aa300
+		// });
+
+		// Display Males
 		for (let i = 0; i < statsM.length; i++) {
 			for (let j = 0; j < statsM[i].length; j++) {
 				let width = (statsM[i][j] / max) * 3;
 				let dashGeom = new THREE.BoxGeometry(width, 0.1, 0.05);
 				let dash = new THREE.Mesh(dashGeom, dashMaterial);
-				scene.add(dash);
-				dash.position.set(0, -1 + i * 0.1, 0 + j * -0.05);
-
-				// Create center separator
-				scene.add(centerLine);
-				centerLine.position.set(0, 0, 0 + j * -0.05);
+				group.add(dash);
+				dash.position.set(width / -2 - 0.016, -1 + i * 0.1, 0 + j * -0.05);
 			}
 		}
+
+		// Display Females
+		for (let i = 0; i < statsF.length; i++) {
+			for (let j = 0; j < statsF[i].length; j++) {
+				let width = (statsF[i][j] / max) * 3;
+				let dashGeom = new THREE.BoxGeometry(width, 0.1, 0.05);
+				let dash = new THREE.Mesh(dashGeom, dashMaterial);
+				group.add(dash);
+				dash.position.set(width / 2 + 0.015, -1 + i * 0.1, 0 + j * -0.05);
+			}
+		}
+		var boundingBox = new THREE.Box3().setFromObject(group);
+		console.log();
+
+		scene.add(group);
+		group.position.set(0, 0, boundingBox.getSize().z / 2 - 0.025);
 
 		// Add Orbit controller
 		const controls = new OrbitControls(camera, renderer.domElement);
