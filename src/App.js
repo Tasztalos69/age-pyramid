@@ -79,12 +79,6 @@ export default class App extends React.Component {
 		document.body.appendChild(renderer.domElement);
 		camera.position.z = 5;
 
-		// Create center separator
-		const centerLineGeometry = new THREE.BoxGeometry(0.03, 3, 5);
-		const materialBlack = new THREE.MeshBasicMaterial({ color: 0x101010 });
-		const centerLine = new THREE.Mesh(centerLineGeometry, materialBlack);
-		scene.add(centerLine);
-
 		//----------------------
 		// Create pyramid
 		//----------------------
@@ -95,6 +89,9 @@ export default class App extends React.Component {
 			},
 			statsF = [],
 			statsM = [];
+		const dashMaterial = new THREE.MeshBasicMaterial({
+			color: 0x5aa300
+		});
 
 		// Generate arrays
 		for (let i = 0; i < 21; i++) {
@@ -169,12 +166,21 @@ export default class App extends React.Component {
 		var maxF = Math.max.apply(null, maxRowF);
 		var max = Math.max(maxM, maxF);
 
+		const centerLineGeometry = new THREE.BoxGeometry(0.03, 2.1, 0.05);
+		const materialBlack = new THREE.MeshBasicMaterial({ color: 0x101010 });
+		const centerLine = new THREE.Mesh(centerLineGeometry, materialBlack);
 		for (let i = 0; i < statsM.length; i++) {
-			console.group(`StatsM ${i}`);
 			for (let j = 0; j < statsM[i].length; j++) {
-				console.log(statsM[i][j]);
+				let width = (statsM[i][j] / max) * 3;
+				let dashGeom = new THREE.BoxGeometry(width, 0.1, 0.05);
+				let dash = new THREE.Mesh(dashGeom, dashMaterial);
+				scene.add(dash);
+				dash.position.set(0, -1 + i * 0.1, 0 + j * -0.05);
+
+				// Create center separator
+				scene.add(centerLine);
+				centerLine.position.set(0, 0, 0 + j * -0.05);
 			}
-			console.groupEnd();
 		}
 
 		// Add Orbit controller
@@ -208,7 +214,7 @@ export default class App extends React.Component {
 	render() {
 		return (
 			<div className='App'>
-				<h1>Age pyramid</h1>
+				<h1>Age pyramid visualizer</h1>
 
 				<form>
 					<p>Country</p>
@@ -290,7 +296,8 @@ export default class App extends React.Component {
 					</p>
 					<hr />
 					<p>
-						Created by BMK. <br /> Licensed under <b>MIT</b> License.
+						Created by BMK. <br /> Licensed under <b>MIT</b> License. <br />{" "}
+						<u>Database</u>|<u>Technology</u>
 					</p>
 				</footer>
 			</div>
