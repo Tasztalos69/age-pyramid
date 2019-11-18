@@ -325,27 +325,29 @@ export default class App extends React.Component {
 							})}
 						</ul>
 						<p>2. Specify years</p>
-						<input
-							type='number'
-							name='yearStart'
-							value={this.state.yearStart}
-							onChange={this.handleYearChange}
-							autoComplete='off'
-							required
-						/>
-						<p>-</p>
-						<input
-							type='number'
-							name='yearEnd'
-							value={this.state.yearEnd}
-							onChange={this.handleYearChange}
-							autoComplete='off'
-							required
-						/>
-						<p>
-							min: {this.state.years[0].name} - max:{" "}
-							{this.state.years[this.state.years.length - 1].name}
-						</p>
+						<div className='years-wrapper'>
+							<input
+								type='number'
+								name='yearStart'
+								value={this.state.yearStart}
+								onChange={this.handleYearChange}
+								autoComplete='off'
+								required
+							/>
+							<p>-</p>
+							<input
+								type='number'
+								name='yearEnd'
+								value={this.state.yearEnd}
+								onChange={this.handleYearChange}
+								autoComplete='off'
+								required
+							/>
+							<p className='years-minmax'>
+								min: {this.state.years[0].name} - max:{" "}
+								{this.state.years[this.state.years.length - 1].name}
+							</p>
+						</div>
 						<button onClick={this.initGraph.bind(this)}>Submit</button>
 					</div>
 				</form>
