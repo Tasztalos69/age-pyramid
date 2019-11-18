@@ -324,7 +324,7 @@ export default class App extends React.Component {
 								);
 							})}
 						</ul>
-						<p>2. Specify years</p>
+						<p>2. Specify start and end years</p>
 						<div className='years-wrapper'>
 							<input
 								type='number'
