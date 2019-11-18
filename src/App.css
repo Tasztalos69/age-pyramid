@@ -29,6 +29,7 @@ input[type="number"] {
 	-moz-appearance: textfield;
 }
 
+input,
 input:focus {
 	outline: none;
 }
@@ -43,7 +44,22 @@ input:focus {
 	padding: 0;
 	background: white;
 	z-index: 10;
+	transition: 0.4s all ease-in-out;
+}
+
+#loader-gif {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 200px;
+}
+
+#loader-form {
+	width: 80px;
+	margin: 0 0 0 calc(50% + 70px);
 	transition: 0.2s all ease-in-out;
+	opacity: 0;
 }
 
 h1 {
@@ -69,6 +85,7 @@ form {
 	height: 100vh;
 	background: white;
 	z-index: 0;
+	transition: 0.4s all ease-in-out;
 }
 
 .form-wrapper {

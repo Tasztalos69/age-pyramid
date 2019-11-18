@@ -3,6 +3,7 @@ import "./App.css";
 import axios from "axios";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { ReactComponent as Loading } from "./loading.svg";
 
 export default class App extends React.Component {
 	constructor(props) {
@@ -43,7 +44,7 @@ export default class App extends React.Component {
 		document.querySelector("#loader-main").style.opacity = 0;
 		setTimeout(() => {
 			document.querySelector("#loader-main").style.display = "none";
-		}, 300);
+		}, 500);
 	}
 
 	searchCountry = (e) => {
@@ -87,6 +88,7 @@ export default class App extends React.Component {
 			) {
 				alert("Values!");
 			} else {
+				document.querySelector("#loader-form").style.opacity = 1;
 				// Create main setup
 				const scene = new THREE.Scene();
 				const group = new THREE.Group();
@@ -96,6 +98,7 @@ export default class App extends React.Component {
 				while (group.children.length > 0) {
 					group.remove(group.children[0]);
 				}
+				scene.dispose();
 				scene.background = new THREE.Color(0xffffff);
 				const camera = new THREE.PerspectiveCamera(
 					75,
@@ -344,17 +347,24 @@ export default class App extends React.Component {
 					},
 					false
 				);
-				// TODO: test
-				document.querySelector("#reset").onClick = (e) => {
+				document.querySelector("#reset").addEventListener("click", () => {
 					controls.reset();
-				};
+				});
+				setTimeout(() => {
+					document.querySelector("form").style.opacity = 0;
+					setTimeout(() => {
+						document.querySelector("form").style.display = "none";
+					}, 500);
+				}, 500);
 			}
 		}
 	}
 	render() {
 		return (
 			<div className='App'>
-				<div id='loader-main'></div>
+				<div id='loader-main'>
+					<Loading id='loader-gif' />
+				</div>
 				<h1>Age pyramid visualizer</h1>
 
 				<form>
@@ -433,6 +443,7 @@ export default class App extends React.Component {
 						>
 							Submit
 						</button>
+						<Loading id='loader-form' />
 					</div>
 				</form>
 				<footer>
