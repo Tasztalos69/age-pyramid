@@ -98,10 +98,8 @@ input[type="number"] {
 }
 
 form button {
-	position: absolute;
-	left: 50%;
-	bottom: -15%;
-	transform: translateX(-50%);
+	margin-left: 50%;
+	transform: translate(-50%, 300%);
 	font-family: "Comfortaa";
 	background: #5aa300;
 	color: white;
@@ -117,7 +115,7 @@ form button {
 }
 
 form button:hover {
-	transform: translateX(-50%) scale(1.1);
+	transform: translate(-50%, 300%) scale(1.1);
 }
 
 form p {
