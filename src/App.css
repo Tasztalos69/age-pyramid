@@ -33,6 +33,19 @@ input:focus {
 	outline: none;
 }
 
+#loader-main {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	margin: 0;
+	padding: 0;
+	background: white;
+	z-index: 10;
+	transition: 0.2s all ease-in-out;
+}
+
 h1 {
 	text-transform: uppercase;
 	text-align: center;
@@ -60,11 +73,11 @@ form {
 
 .form-wrapper {
 	position: absolute;
-	top: 50%;
+	top: 45%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 	width: 1000px;
-	height: 65%;
+	/* height: 65%; */
 }
 
 input {
@@ -129,6 +142,7 @@ form p {
 .years-wrapper {
 	position: relative;
 	margin: 0 16%;
+	transition: 0.2s all ease-in-out;
 }
 
 .years-wrapper p {
@@ -180,6 +194,10 @@ footer p {
 	text-align: right;
 	margin: 0;
 	padding: 0;
+}
+
+#reset {
+	cursor: pointer;
 }
 
 footer hr {

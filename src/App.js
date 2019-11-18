@@ -19,7 +19,7 @@ export default class App extends React.Component {
 		};
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		var config = {
 			headers: { Accept: "text/json" }
 		};
@@ -28,7 +28,7 @@ export default class App extends React.Component {
 			yrsUrl =
 				"https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5.F._T.001.M";
 
-		axios.get(cntUrl, config).then((res) => {
+		await axios.get(cntUrl, config).then((res) => {
 			let cnt = res.data.structure.dimensions.series.filter((prop) => {
 				return prop.id === "REF_AREA";
 			})[0].values;
@@ -36,10 +36,14 @@ export default class App extends React.Component {
 			console.log("Got countries");
 		});
 
-		axios.get(yrsUrl, config).then((res) => {
+		await axios.get(yrsUrl, config).then((res) => {
 			let yrs = res.data.structure.dimensions.observation[0].values;
 			this.setState({ years: yrs });
 		});
+		document.querySelector("#loader-main").style.opacity = 0;
+		setTimeout(() => {
+			document.querySelector("#loader-main").style.display = "none";
+		}, 300);
 	}
 
 	searchCountry = (e) => {
@@ -340,12 +344,17 @@ export default class App extends React.Component {
 					},
 					false
 				);
+				// TODO: test
+				document.querySelector("#reset").onClick = (e) => {
+					controls.reset();
+				};
 			}
 		}
 	}
 	render() {
 		return (
 			<div className='App'>
+				<div id='loader-main'></div>
 				<h1>Age pyramid visualizer</h1>
 
 				<form>
@@ -382,8 +391,15 @@ export default class App extends React.Component {
 								);
 							})}
 						</ul>
-						<p>2. Specify start and end years</p>
-						<div className='years-wrapper'>
+						<p
+							style={{ opacity: this.state.selectedCountryId !== null ? 1 : 0 }}
+						>
+							2. Specify start and end years
+						</p>
+						<div
+							className='years-wrapper'
+							style={{ opacity: this.state.selectedCountryId !== null ? 1 : 0 }}
+						>
 							<input
 								type='number'
 								name='yearStart'
@@ -406,7 +422,17 @@ export default class App extends React.Component {
 								{this.state.years[this.state.years.length - 1].name}
 							</p>
 						</div>
-						<button onClick={this.initGraph.bind(this)}>Submit</button>
+						<button
+							onClick={this.initGraph.bind(this)}
+							style={{
+								opacity:
+									this.state.yearStart !== "" && this.state.yearEnd !== ""
+										? 1
+										: 0
+							}}
+						>
+							Submit
+						</button>
 					</div>
 				</form>
 				<footer>
@@ -418,11 +444,7 @@ export default class App extends React.Component {
 							{this.state.yearStart} - {this.state.yearEnd}
 						</b>
 						<br />
-						<span
-							onClick={() => {
-								console.log("reset");
-							}}
-						>
+						<span id='reset'>
 							<b>Reset view</b>
 						</span>
 					</p>
