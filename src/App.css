@@ -5,12 +5,6 @@ html {
 	padding: 0;
 	font-family: "Open Sans";
 }
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-	-webkit-appearance: none;
-	margin: 0;
-}
-
 * {
 	-webkit-touch-callout: none; /* iOS Safari */
 	-webkit-user-select: none; /* Safari */
@@ -21,18 +15,64 @@ input[type="number"]::-webkit-outer-spin-button {
                                   supported by Chrome, Opera and Firefox */
 }
 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
 input[type="number"] {
 	-moz-appearance: textfield;
 }
 
+input:focus {
+	outline: none;
+}
+
 h1 {
 	text-transform: uppercase;
+	text-align: center;
 	font-weight: 600;
 	letter-spacing: 2px;
 	position: absolute;
 	top: 2%;
 	left: 50%;
 	transform: translateX(-50%);
+	z-index: 1;
+}
+
+form {
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin: 0;
+	padding: 0;
+	width: 100vw;
+	height: 100vh;
+	background: white;
+	z-index: 0;
+}
+
+.form-wrapper {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 80%;
+	height: 65%;
+}
+
+input[type="text"] {
+	width: calc(80% - 40px);
+	margin: 0 10%;
+	font-size: 2rem;
+	padding: 10px 20px;
+	border-radius: 20px;
+	border: none;
+	-webkit-box-shadow: 0px 0px 40px -12px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0px 0px 40px -12px rgba(0, 0, 0, 0.2);
+	box-shadow: 0px 0px 40px -12px rgba(0, 0, 0, 0.2);
+	color: #808080;
 }
 
 .cnt-list__li-active {
@@ -43,7 +83,7 @@ canvas {
 	position: absolute;
 	top: 0;
 	left: 0;
-	z-index: -1;
+	z-index: -2;
 	cursor: grab;
 }
 
@@ -53,6 +93,7 @@ footer {
 	right: 1%;
 	font-family: "Major Mono display";
 	text-transform: lowercase;
+	z-index: -1;
 }
 
 footer p {
