@@ -4,6 +4,7 @@ import axios from "axios";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { ReactComponent as Loading } from "./loading.svg";
+import { ReactComponent as Search } from "./search.svg";
 
 export default class App extends React.Component {
 	constructor(props) {
@@ -49,8 +50,13 @@ export default class App extends React.Component {
 	}
 
 	searchCountry = (e) => {
+		document.querySelector(".cnt-list").style.opacity = 1;
 		this.setState({ countryInput: e.target.value });
-		if (e.target.value === null || e.target.value === "" || e.target.value === undefined) {
+		if (
+			e.target.value === null ||
+			e.target.value === "" ||
+			e.target.value === undefined
+		) {
 			this.setState({ matchedCountries: [] });
 		} else {
 			const regex = new RegExp(`^${e.target.value}`, "gi");
@@ -74,7 +80,9 @@ export default class App extends React.Component {
 			alert("Fill in all");
 		} else {
 			let minYear = parseInt(this.state.years[0].name);
-			let maxYear = parseInt(this.state.years[this.state.years.length - 1].name);
+			let maxYear = parseInt(
+				this.state.years[this.state.years.length - 1].name
+			);
 			if (
 				parseInt(this.state.yearStart) < minYear ||
 				parseInt(this.state.yearStart) > maxYear ||
@@ -124,7 +132,10 @@ export default class App extends React.Component {
 				}
 
 				// Create center separator
-				let lineZ = (parseInt(this.state.yearEnd) - parseInt(this.state.yearStart)) * 0.05 + 0.05;
+				let lineZ =
+					(parseInt(this.state.yearEnd) - parseInt(this.state.yearStart)) *
+						0.05 +
+					0.05;
 				const centerLineGeometry = new THREE.BoxGeometry(0.03, 2.1, lineZ);
 				const materialBlack = new THREE.MeshBasicMaterial({ color: 0x101010 });
 				const centerLine = new THREE.Mesh(centerLineGeometry, materialBlack);
@@ -134,7 +145,8 @@ export default class App extends React.Component {
 				const loopYears = (sex, observations, placement) => {
 					for (
 						let i = 0;
-						i < parseInt(this.state.yearEnd) - (parseInt(this.state.yearStart) - 1);
+						i <
+						parseInt(this.state.yearEnd) - (parseInt(this.state.yearStart) - 1);
 						i++
 					) {
 						let intake = observations[Object.keys(observations)[i]][0];
@@ -149,7 +161,9 @@ export default class App extends React.Component {
 				// Main url
 				let mainUrl = `https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5+Y5T10+Y10T14+Y15T19+Y20T24+Y25T29+Y30T34+Y35T39+Y40T44+Y45T49+Y50T54+Y55T59+Y60T64+Y65T69+Y70T74+Y75T79+Y80T84+Y85T89+Y90T94+Y95T99+Y_GE100.M._T.${parseInt(
 					this.state.selectedCountryId
-				)}.M?startPeriod=${this.state.yearStart}&endPeriod=${this.state.yearEnd}`;
+				)}.M?startPeriod=${this.state.yearStart}&endPeriod=${
+					this.state.yearEnd
+				}`;
 
 				await axios
 					.get(mainUrl, config)
@@ -174,7 +188,9 @@ export default class App extends React.Component {
 
 				mainUrl = `https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5+Y5T10+Y10T14+Y15T19+Y20T24+Y25T29+Y30T34+Y35T39+Y40T44+Y45T49+Y50T54+Y55T59+Y60T64+Y65T69+Y70T74+Y75T79+Y80T84+Y85T89+Y90T94+Y95T99+Y_GE100.F._T.${parseInt(
 					this.state.selectedCountryId
-				)}.M?startPeriod=${this.state.yearStart}&endPeriod=${this.state.yearEnd}`;
+				)}.M?startPeriod=${this.state.yearStart}&endPeriod=${
+					this.state.yearEnd
+				}`;
 				await axios.get(mainUrl, config).then((res) => {
 					let series = res.data.dataSets[0].series;
 					for (let age = 0; age < 21; age++) {
@@ -225,13 +241,34 @@ export default class App extends React.Component {
 						let dashGeom = new THREE.BoxGeometry(width, 0.1, 0.05);
 						let dashMat;
 						if (width > 2) {
-							dashMat = [texShort, texShort, texLong, texLong, texLong, texLong];
+							dashMat = [
+								texShort,
+								texShort,
+								texLong,
+								texLong,
+								texLong,
+								texLong
+							];
 						} else if (width > 1) {
 							dashMat = [texShort, texShort, texMed, texMed, texMed, texMed];
 						} else if (width > 0.1) {
-							dashMat = [texShort, texShort, texMedLow, texMedLow, texMedLow, texMedLow];
+							dashMat = [
+								texShort,
+								texShort,
+								texMedLow,
+								texMedLow,
+								texMedLow,
+								texMedLow
+							];
 						} else {
-							dashMat = [texShort, texShort, texShort, texShort, texShort, texShort];
+							dashMat = [
+								texShort,
+								texShort,
+								texShort,
+								texShort,
+								texShort,
+								texShort
+							];
 						}
 						let dash = new THREE.Mesh(dashGeom, dashMat);
 						group.add(dash);
@@ -246,13 +283,34 @@ export default class App extends React.Component {
 						let dashGeom = new THREE.BoxGeometry(width, 0.1, 0.05);
 						let dashMat;
 						if (width > 2) {
-							dashMat = [texShort, texShort, texLong, texLong, texLong, texLong];
+							dashMat = [
+								texShort,
+								texShort,
+								texLong,
+								texLong,
+								texLong,
+								texLong
+							];
 						} else if (width > 1) {
 							dashMat = [texShort, texShort, texMed, texMed, texMed, texMed];
 						} else if (width > 0.1) {
-							dashMat = [texShort, texShort, texMedLow, texMedLow, texMedLow, texMedLow];
+							dashMat = [
+								texShort,
+								texShort,
+								texMedLow,
+								texMedLow,
+								texMedLow,
+								texMedLow
+							];
 						} else {
-							dashMat = [texShort, texShort, texShort, texShort, texShort, texShort];
+							dashMat = [
+								texShort,
+								texShort,
+								texShort,
+								texShort,
+								texShort,
+								texShort
+							];
 						}
 						let dash = new THREE.Mesh(dashGeom, dashMat);
 						group.add(dash);
@@ -316,6 +374,7 @@ export default class App extends React.Component {
 					<div className='form-wrapper'>
 						<p>1. Select Country</p>
 						<div className='cnt-input-wrapper'>
+							<Search id='search' />
 							<input
 								type='text'
 								name='country'
@@ -327,32 +386,37 @@ export default class App extends React.Component {
 							/>
 							<ul
 								className='cnt-list'
-								style={{ opacity: this.state.matchedCountries.length != 0 ? 1 : 0 }}
+								style={{
+									opacity: this.state.matchedCountries.length !== 0 ? 1 : 0
+								}}
 							>
 								{this.state.matchedCountries.map((cnt) => {
 									return (
-										<React.Fragment>
-											<li
-												className={`cnt-list__li ${
-													this.state.selectedCountry === cnt.name ? "cnt-list__li-active" : ""
-												}`}
-												key={cnt.id}
-												onClick={() => {
-													this.setState({
-														selectedCountryId: cnt.id,
-														selectedCountry: cnt.name
-													});
-												}}
-											>
-												{cnt.name}
-											</li>
-											<hr />
-										</React.Fragment>
+										<li
+											className={`cnt-list__li ${
+												this.state.selectedCountry === cnt.name
+													? "cnt-list__li-active"
+													: ""
+											}`}
+											key={cnt.id}
+											onClick={() => {
+												this.setState({
+													selectedCountryId: cnt.id,
+													selectedCountry: cnt.name,
+													countryInput: cnt.name
+												});
+												document.querySelector(".cnt-list").style.opacity = 0;
+											}}
+										>
+											{cnt.name}
+										</li>
 									);
 								})}
 							</ul>
 						</div>
-						<p style={{ opacity: this.state.selectedCountryId !== null ? 1 : 0 }}>
+						<p
+							style={{ opacity: this.state.selectedCountryId !== null ? 1 : 0 }}
+						>
 							2. Specify start and end years
 						</p>
 						<div
@@ -384,7 +448,10 @@ export default class App extends React.Component {
 						<button
 							onClick={this.initGraph.bind(this)}
 							style={{
-								opacity: this.state.yearStart !== "" && this.state.yearEnd !== "" ? 1 : 0
+								opacity:
+									this.state.yearStart !== "" && this.state.yearEnd !== ""
+										? 1
+										: 0
 							}}
 						>
 							Submit
@@ -407,8 +474,8 @@ export default class App extends React.Component {
 					</p>
 					<hr />
 					<p>
-						Created by BMK. <br /> Licensed under <b>MIT</b> License. <br /> <u>Database</u>|
-						<u>Technology</u>
+						Created by BMK. <br /> Licensed under <b>MIT</b> License. <br />{" "}
+						<u>Database</u>|<u>Technology</u>
 					</p>
 				</footer>
 			</div>
