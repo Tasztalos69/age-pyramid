@@ -315,6 +315,7 @@ export default class App extends React.Component {
 				<form>
 					<div className='form-wrapper'>
 						<p>1. Select Country</p>
+						<div className="cnt-input-wrapper">
 						<input
 							type='text'
 							name='country'
@@ -344,6 +345,7 @@ export default class App extends React.Component {
 								);
 							})}
 						</ul>
+						</div>
 						<p style={{ opacity: this.state.selectedCountryId !== null ? 1 : 0 }}>
 							2. Specify start and end years
 						</p>
