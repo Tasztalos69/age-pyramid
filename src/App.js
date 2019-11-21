@@ -90,7 +90,18 @@ export default class App extends React.Component {
 			this.state.yearStart === "" ||
 			this.state.yearEnd === ""
 		) {
-			alert("Fill in all");
+			let inputNum = document.querySelectorAll(".input-number");
+			inputNum[0].style.border = "2px solid #ff0000";
+			inputNum[1].style.border = "2px solid #ff0000";
+			if (this.state.selectedCountry === null)
+				document.querySelector("#input-text").style.border =
+					"2px solid #ff0000";
+			setTimeout(() => {
+				document.querySelector("#input-text").style.border =
+					"2px solid transparent";
+				inputNum[0].style.border = "2px solid transparent";
+				inputNum[1].style.border = "2px solid transparent";
+			}, 300);
 		} else {
 			let minYear = parseInt(this.state.years[0].name);
 			let maxYear = parseInt(
@@ -102,7 +113,15 @@ export default class App extends React.Component {
 				parseInt(this.state.yearEnd) < minYear ||
 				parseInt(this.state.yearEnd) > maxYear
 			) {
-				alert("Values!");
+				let inputNum = document.querySelectorAll(".input-number");
+				document.querySelector(".years-minmax").style.color = "red";
+				inputNum[0].style.border = "2px solid #ff0000";
+				inputNum[1].style.border = "2px solid #ff0000";
+				setTimeout(() => {
+					inputNum[0].style.border = "2px solid transparent";
+					inputNum[1].style.border = "2px solid transparent";
+					document.querySelector(".years-minmax").style.color = "black";
+				}, 600);
 			} else {
 				document.querySelector("#loader-form").style.opacity = 1;
 				// Create main setup
@@ -401,6 +420,7 @@ export default class App extends React.Component {
 						<div className='cnt-input-wrapper'>
 							<Search id='search' />
 							<input
+								id='input-text'
 								type='text'
 								name='country'
 								value={this.state.countryInput}
@@ -456,6 +476,7 @@ export default class App extends React.Component {
 								onChange={this.handleYearChange}
 								autoComplete='off'
 								required
+								className='input-number'
 							/>
 							<p>-</p>
 							<input
@@ -465,6 +486,7 @@ export default class App extends React.Component {
 								onChange={this.handleYearChange}
 								autoComplete='off'
 								required
+								className='input-number'
 							/>
 							<p className='years-minmax'>
 								min: {this.state.years[0].name} - max:{" "}
