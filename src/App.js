@@ -30,14 +30,19 @@ export default class App extends React.Component {
 			yrsUrl =
 				"https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5.F._T.001.M";
 
-		await axios.get(cntUrl, config).then((res) => {
-			let cnt = res.data.structure.dimensions.series.filter((prop) => {
-				return prop.id === "REF_AREA";
-			})[0].values;
-			this.setState({ countries: cnt });
-			console.log("Got countries");
-		});
-		// TODO: error handler
+		await axios
+			.get(cntUrl, config)
+			.then((res) => {
+				let cnt = res.data.structure.dimensions.series.filter((prop) => {
+					return prop.id === "REF_AREA";
+				})[0].values;
+				this.setState({ countries: cnt });
+				console.log("Got countries");
+			})
+			.catch((err) => {
+				document.querySelector("#loader-main").style.opacity = 0;
+				document.querySelector("#error").style.opacity = 1;
+			});
 
 		await axios.get(yrsUrl, config).then((res) => {
 			let yrs = res.data.structure.dimensions.observation[0].values;
@@ -365,6 +370,16 @@ export default class App extends React.Component {
 	render() {
 		return (
 			<div className='App'>
+				<div id='error'>
+					<p>An error ocurred.</p>
+					<button
+						onClick={() => {
+							window.location.reload();
+						}}
+					>
+						Reload
+					</button>
+				</div>
 				<div id='loader-main'>
 					<Loading id='loader-gif' />
 				</div>
