@@ -67,6 +67,8 @@ input:focus {
 	width: 100vw;
 	height: 100vh;
 	z-index: 9;
+	opacity: 0;
+	display: none;
 }
 
 #error p {
@@ -306,6 +308,10 @@ footer p {
 	padding: 0;
 }
 
+footer u {
+	cursor: pointer;
+}
+
 #reset {
 	cursor: pointer;
 }
@@ -313,6 +319,32 @@ footer p {
 footer hr {
 	margin: 0;
 	padding: 0;
+}
+
+.modals {
+	position: absolute;
+	right: 1%;
+	font-family: "Major mono display";
+	text-transform: lowercase;
+	transition: 0.2s all ease-in-out;
+	text-align: right;
+}
+
+.modals a {
+	color: black;
+	font-size: 1em;
+}
+
+.modals ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+.modals p,
+.modals li,
+.modals h3 {
+	margin: 10px 0;
 }
 
 @media only screen and (max-height: 1400px) {

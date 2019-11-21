@@ -17,7 +17,9 @@ export default class App extends React.Component {
 			selectedCountryId: null,
 			selectedCountry: null,
 			yearStart: "",
-			yearEnd: ""
+			yearEnd: "",
+			modalDb: false,
+			modalTech: false
 		};
 	}
 
@@ -40,7 +42,9 @@ export default class App extends React.Component {
 				console.log("Got countries");
 			})
 			.catch((err) => {
+				console.error(err);
 				document.querySelector("#loader-main").style.opacity = 0;
+				document.querySelector("#error").style.display = "block";
 				document.querySelector("#error").style.opacity = 1;
 			});
 
@@ -52,6 +56,10 @@ export default class App extends React.Component {
 		setTimeout(() => {
 			document.querySelector("#loader-main").style.display = "none";
 		}, 500);
+
+		let height = document.querySelector("footer").offsetHeight + 5 + "px";
+		document.querySelector(".modalDb").style.bottom = height;
+		document.querySelector(".modalTech").style.bottom = height;
 	}
 
 	searchCountry = (e) => {
@@ -91,8 +99,8 @@ export default class App extends React.Component {
 			if (
 				parseInt(this.state.yearStart) < minYear ||
 				parseInt(this.state.yearStart) > maxYear ||
-				parseInt(this.state.yearStart) < minYear ||
-				parseInt(this.state.yearStart) > maxYear
+				parseInt(this.state.yearEnd) < minYear ||
+				parseInt(this.state.yearEnd) > maxYear
 			) {
 				alert("Values!");
 			} else {
@@ -164,11 +172,7 @@ export default class App extends React.Component {
 				};
 
 				// Main url
-				let mainUrl = `https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5+Y5T10+Y10T14+Y15T19+Y20T24+Y25T29+Y30T34+Y35T39+Y40T44+Y45T49+Y50T54+Y55T59+Y60T64+Y65T69+Y70T74+Y75T79+Y80T84+Y85T89+Y90T94+Y95T99+Y_GE100.M._T.${parseInt(
-					this.state.selectedCountryId
-				)}.M?startPeriod=${this.state.yearStart}&endPeriod=${
-					this.state.yearEnd
-				}`;
+				let mainUrl = `https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5+Y5T10+Y10T14+Y15T19+Y20T24+Y25T29+Y30T34+Y35T39+Y40T44+Y45T49+Y50T54+Y55T59+Y60T64+Y65T69+Y70T74+Y75T79+Y80T84+Y85T89+Y90T94+Y95T99+Y_GE100.M._T.${this.state.selectedCountryId}.M?startPeriod=${this.state.yearStart}&endPeriod=${this.state.yearEnd}`;
 
 				await axios
 					.get(mainUrl, config)
@@ -189,30 +193,37 @@ export default class App extends React.Component {
 							}
 						}
 					})
-					.catch((err) => console.log(err));
+					.catch((err) => {
+						console.error(err);
+						document.querySelector("#error").style.display = "block";
+						document.querySelector("#error").style.opacity = 1;
+					});
 
-				mainUrl = `https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5+Y5T10+Y10T14+Y15T19+Y20T24+Y25T29+Y30T34+Y35T39+Y40T44+Y45T49+Y50T54+Y55T59+Y60T64+Y65T69+Y70T74+Y75T79+Y80T84+Y85T89+Y90T94+Y95T99+Y_GE100.F._T.${parseInt(
-					this.state.selectedCountryId
-				)}.M?startPeriod=${this.state.yearStart}&endPeriod=${
-					this.state.yearEnd
-				}`;
-				await axios.get(mainUrl, config).then((res) => {
-					let series = res.data.dataSets[0].series;
-					for (let age = 0; age < 21; age++) {
-						let observations = series[Object.keys(series)[age]].observations;
-						if (age === 0) {
-							loopYears("F", observations, 20);
-						} else if (age === 1) {
-							loopYears("F", observations, 0);
-						} else if (age === 12) {
-							loopYears("F", observations, 1);
-						} else if (age <= 11) {
-							loopYears("F", observations, age);
-						} else {
-							loopYears("F", observations, age - 1);
+				mainUrl = `https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5+Y5T10+Y10T14+Y15T19+Y20T24+Y25T29+Y30T34+Y35T39+Y40T44+Y45T49+Y50T54+Y55T59+Y60T64+Y65T69+Y70T74+Y75T79+Y80T84+Y85T89+Y90T94+Y95T99+Y_GE100.F._T.${this.state.selectedCountryId}.M?startPeriod=${this.state.yearStart}&endPeriod=${this.state.yearEnd}`;
+				await axios
+					.get(mainUrl, config)
+					.then((res) => {
+						let series = res.data.dataSets[0].series;
+						for (let age = 0; age < 21; age++) {
+							let observations = series[Object.keys(series)[age]].observations;
+							if (age === 0) {
+								loopYears("F", observations, 20);
+							} else if (age === 1) {
+								loopYears("F", observations, 0);
+							} else if (age === 12) {
+								loopYears("F", observations, 1);
+							} else if (age <= 11) {
+								loopYears("F", observations, age);
+							} else {
+								loopYears("F", observations, age - 1);
+							}
 						}
-					}
-				});
+					})
+					.catch((err) => {
+						document.querySelector("#error").style.display = "block";
+						document.querySelector("#error").style.opacity = 1;
+						console.error(err);
+					});
 
 				// Get the longest value
 				var maxRowM = statsM.map((row) => {
@@ -384,7 +395,6 @@ export default class App extends React.Component {
 					<Loading id='loader-gif' />
 				</div>
 				<h1>Age pyramid visualizer</h1>
-
 				<form>
 					<div className='form-wrapper'>
 						<p>1. Select Country</p>
@@ -418,7 +428,8 @@ export default class App extends React.Component {
 												this.setState({
 													selectedCountryId: cnt.id,
 													selectedCountry: cnt.name,
-													countryInput: cnt.name
+													countryInput: cnt.name,
+													matchedCountries: []
 												});
 												document.querySelector(".cnt-list").style.opacity = 0;
 											}}
@@ -489,10 +500,66 @@ export default class App extends React.Component {
 					</p>
 					<hr />
 					<p>
-						Created by BMK. <br /> Licensed under <b>MIT</b> License. <br />{" "}
-						<u>Database</u>|<u>Technology</u>
+						Created by{" "}
+						<a
+							href='https://github.com/Tasztalos69'
+							style={{
+								color: "black"
+							}}
+						>
+							BMK.
+						</a>{" "}
+						<br /> Licensed under <b>MIT</b> License. <br />{" "}
+						<u
+							onClick={() => {
+								this.setState({
+									modalDb: !this.state.modalDb,
+									modalTech: false
+								});
+							}}
+						>
+							Database
+						</u>
+						|
+						<u
+							onClick={() => {
+								this.setState({
+									modalTech: !this.state.modalTech,
+									modalDb: false
+								});
+							}}
+						>
+							Technology
+						</u>
 					</p>
 				</footer>
+				<div
+					className='modals modalDb'
+					style={{ opacity: this.state.modalDb ? 1 : 0 }}
+				>
+					<p>
+						Database used:{" "}
+						<a href={"https://data.un.org"}>https://data.un.org</a>
+					</p>
+				</div>
+				<div
+					className='modals modalTech'
+					style={{ opacity: this.state.modalTech ? 1 : 0 }}
+				>
+					<h3>Technology used:</h3>
+					<ul>
+						<li>
+							Framework: <a href='https://reactjs.org'>React</a>
+						</li>
+
+						<li>
+							Renderer: <a href='https://threejs.org'>Three js</a>
+						</li>
+						<li>
+							Requests: <a href='https://github.com/axios/axios'>Axios</a>
+						</li>
+					</ul>
+				</div>
 			</div>
 		);
 	}
