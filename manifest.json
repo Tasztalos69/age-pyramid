@@ -1,0 +1,8 @@
+{
+	"short_name": "Age Pyramid",
+	"name": "Age Pyramid Visualizer",
+	"start_url": ".",
+	"display": "standalone",
+	"theme_color": "#5aa300",
+	"background_color": "#ffffff"
+}
