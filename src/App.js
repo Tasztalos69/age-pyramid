@@ -315,36 +315,42 @@ export default class App extends React.Component {
 				<form>
 					<div className='form-wrapper'>
 						<p>1. Select Country</p>
-						<div className="cnt-input-wrapper">
-						<input
-							type='text'
-							name='country'
-							value={this.state.countryInput}
-							onChange={this.searchCountry}
-							autoFocus
-							autoComplete='off'
-							required
-						/>
-						<ul className='cnt-list'>
-							{this.state.matchedCountries.map((cnt) => {
-								return (
-									<li
-										className={`cnt-list__li ${
-											this.state.selectedCountry === cnt.name ? "cnt-list__li-active" : ""
-										}`}
-										key={cnt.id}
-										onClick={() => {
-											this.setState({
-												selectedCountryId: cnt.id,
-												selectedCountry: cnt.name
-											});
-										}}
-									>
-										{cnt.name}
-									</li>
-								);
-							})}
-						</ul>
+						<div className='cnt-input-wrapper'>
+							<input
+								type='text'
+								name='country'
+								value={this.state.countryInput}
+								onChange={this.searchCountry}
+								autoFocus
+								autoComplete='off'
+								required
+							/>
+							<ul
+								className='cnt-list'
+								style={{ opacity: this.state.matchedCountries.length != 0 ? 1 : 0 }}
+							>
+								{this.state.matchedCountries.map((cnt) => {
+									return (
+										<React.Fragment>
+											<li
+												className={`cnt-list__li ${
+													this.state.selectedCountry === cnt.name ? "cnt-list__li-active" : ""
+												}`}
+												key={cnt.id}
+												onClick={() => {
+													this.setState({
+														selectedCountryId: cnt.id,
+														selectedCountry: cnt.name
+													});
+												}}
+											>
+												{cnt.name}
+											</li>
+											<hr />
+										</React.Fragment>
+									);
+								})}
+							</ul>
 						</div>
 						<p style={{ opacity: this.state.selectedCountryId !== null ? 1 : 0 }}>
 							2. Specify start and end years

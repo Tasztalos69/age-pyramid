@@ -114,21 +114,28 @@ input[type="text"] {
 	-moz-box-shadow: 0px 0px 40px -12px rgba(0, 0, 0, 0.2);
 	box-shadow: 0px 0px 40px -12px rgba(0, 0, 0, 0.2);
 	color: #202020;
+	z-index: 6;
 }
 
 form ul {
 	position: absolute;
 	top: calc(1.25em + 20px);
 	left: 0;
+	width: calc(100% - 4px);
 	list-style-type: none;
 	margin: 0;
 	padding: 20px 20px 0;
 	border: 2px solid pink;
-	width: 100%;
+	z-index: 5;
 }
 
 form ul li {
+	padding: 15px 20px;
+	font-size: 1.25em;
+}
 
+form ul li:last-child + hr {
+	display: none;
 }
 
 input[type="number"] {
@@ -251,6 +258,6 @@ footer hr {
 
 @media only screen and (max-width: 1350px) {
 	body {
-		font-size: 15px;
+		font-size: 90%;
 	}
 }
