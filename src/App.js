@@ -3,6 +3,7 @@ import "./App.css";
 import axios from "axios";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { SimplifyModifier } from "three/examples/jsm/modifiers/SimplifyModifier.js";
 import { ReactComponent as Loading } from "./loading.svg";
 import { ReactComponent as Search } from "./search.svg";
 
@@ -260,7 +261,6 @@ export default class App extends React.Component {
 				const texShort = new THREE.MeshBasicMaterial({
 					map: new THREE.TextureLoader().load("texture_short.png")
 				});
-
 				const texLong = new THREE.MeshBasicMaterial({
 					map: new THREE.TextureLoader().load("texture_long.png")
 				});
@@ -278,7 +278,7 @@ export default class App extends React.Component {
 						dashMat = [texShort, texShort, texLong, texLong, texLong, texLong];
 					} else if (width > 1) {
 						dashMat = [texShort, texShort, texMed, texMed, texMed, texMed];
-					} else if (width > 0.1) {
+					} else if (width > 0.05) {
 						dashMat = [
 							texShort,
 							texShort,
@@ -303,31 +303,38 @@ export default class App extends React.Component {
 				// Display Males
 				for (let i = 0; i < statsM.length; i++) {
 					for (let j = 0; j < statsM[i].length; j++) {
-						let width = (statsM[i][j] / max) * 3;
-						let dashGeom = new THREE.BoxGeometry(width, 0.1, 0.05);
-						let dashMat = detTex(width);
-						let dash = new THREE.Mesh(dashGeom, dashMat);
-						group.add(dash);
-						dash.position.set(width / -2 - 0.076, -1 + i * 0.1, 0 + j * -0.05);
+						if (statsM[i][j] > 0.01) {
+							let width = (statsM[i][j] / max) * 3;
+							let dashGeom = new THREE.BoxGeometry(width, 0.1, 0.05);
+							let dashMat = detTex(width);
+							let dash = new THREE.Mesh(dashGeom, dashMat);
+							group.add(dash);
+							dash.position.set(
+								width / -2 - 0.076,
+								-1 + i * 0.1,
+								0 + j * -0.05
+							);
+						}
 					}
 				}
 
 				// Display Females
 				for (let i = 0; i < statsF.length; i++) {
 					for (let j = 0; j < statsF[i].length; j++) {
-						let width = (statsF[i][j] / max) * 3;
-						let dashGeom = new THREE.BoxGeometry(width, 0.1, 0.05);
-						let dashMat = detTex(width);
-						let dash = new THREE.Mesh(dashGeom, dashMat);
-						group.add(dash);
-						dash.position.set(width / 2 + 0.075, -1 + i * 0.1, 0 + j * -0.05);
+						if (statsF[i][j] > 0.01) {
+							let width = (statsF[i][j] / max) * 3;
+							let dashGeom = new THREE.BoxGeometry(width, 0.1, 0.05);
+							let dashMat = detTex(width);
+							let dash = new THREE.Mesh(dashGeom, dashMat);
+							group.add(dash);
+							dash.position.set(width / 2 + 0.075, -1 + i * 0.1, 0 + j * -0.05);
+						}
 					}
 				}
 
 				// Add age indicators
 				const fontLoader = new THREE.FontLoader();
 				fontLoader.load("Comfortaa_Regular.json", (font) => {
-					console.log("Font loaded");
 					for (let i = 0; i < 101; i += 10) {
 						let text = new THREE.TextGeometry(i.toString(), {
 							font: font,
@@ -371,6 +378,7 @@ export default class App extends React.Component {
 					renderer.render(scene, camera);
 				};
 				animate();
+				console.log(renderer.info);
 
 				// Handle resizing
 				window.addEventListener(
@@ -577,14 +585,35 @@ export default class App extends React.Component {
 					<h3>Technology used:</h3>
 					<ul>
 						<li>
-							Framework: <a href='https://reactjs.org'>React</a>
+							Framework:{" "}
+							<a
+								target='_blank'
+								rel='noopener noreferrer'
+								href='https://reactjs.org'
+							>
+								React
+							</a>
 						</li>
 
 						<li>
-							Renderer: <a href='https://threejs.org'>Three js</a>
+							Renderer:{" "}
+							<a
+								target='_blank'
+								rel='noopener noreferrer'
+								href='https://threejs.org'
+							>
+								Three js
+							</a>
 						</li>
 						<li>
-							Requests: <a href='https://github.com/axios/axios'>Axios</a>
+							Requests:{" "}
+							<a
+								target='_blank'
+								rel='noopener noreferrer'
+								href='https://github.com/axios/axios'
+							>
+								Axios
+							</a>
 						</li>
 					</ul>
 				</div>
