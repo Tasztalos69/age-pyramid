@@ -123,7 +123,9 @@ export default class App extends React.Component {
 					document.querySelector(".years-minmax").style.color = "black";
 				}, 600);
 			} else {
+				// Show loading indicator
 				document.querySelector("#loader-form").style.opacity = 1;
+
 				// Create main setup
 				const scene = new THREE.Scene();
 				const group = new THREE.Group();
@@ -168,7 +170,7 @@ export default class App extends React.Component {
 					(parseInt(this.state.yearEnd) - parseInt(this.state.yearStart)) *
 						0.05 +
 					0.05;
-				const centerLineGeometry = new THREE.BoxGeometry(0.03, 2.1, lineZ);
+				const centerLineGeometry = new THREE.BoxGeometry(0.15, 2.1, lineZ);
 				const materialBlack = new THREE.MeshBasicMaterial({ color: 0x101010 });
 				const centerLine = new THREE.Mesh(centerLineGeometry, materialBlack);
 				scene.add(centerLine);
@@ -269,45 +271,44 @@ export default class App extends React.Component {
 					map: new THREE.TextureLoader().load("texture_med_low.png")
 				});
 
+				// Texture identifier fn
+				const detTex = (width) => {
+					let dashMat;
+					if (width > 2) {
+						dashMat = [texShort, texShort, texLong, texLong, texLong, texLong];
+					} else if (width > 1) {
+						dashMat = [texShort, texShort, texMed, texMed, texMed, texMed];
+					} else if (width > 0.1) {
+						dashMat = [
+							texShort,
+							texShort,
+							texMedLow,
+							texMedLow,
+							texMedLow,
+							texMedLow
+						];
+					} else {
+						dashMat = [
+							texShort,
+							texShort,
+							texShort,
+							texShort,
+							texShort,
+							texShort
+						];
+					}
+					return dashMat;
+				};
+
 				// Display Males
 				for (let i = 0; i < statsM.length; i++) {
 					for (let j = 0; j < statsM[i].length; j++) {
 						let width = (statsM[i][j] / max) * 3;
 						let dashGeom = new THREE.BoxGeometry(width, 0.1, 0.05);
-						let dashMat;
-						if (width > 2) {
-							dashMat = [
-								texShort,
-								texShort,
-								texLong,
-								texLong,
-								texLong,
-								texLong
-							];
-						} else if (width > 1) {
-							dashMat = [texShort, texShort, texMed, texMed, texMed, texMed];
-						} else if (width > 0.1) {
-							dashMat = [
-								texShort,
-								texShort,
-								texMedLow,
-								texMedLow,
-								texMedLow,
-								texMedLow
-							];
-						} else {
-							dashMat = [
-								texShort,
-								texShort,
-								texShort,
-								texShort,
-								texShort,
-								texShort
-							];
-						}
+						let dashMat = detTex(width);
 						let dash = new THREE.Mesh(dashGeom, dashMat);
 						group.add(dash);
-						dash.position.set(width / -2 - 0.016, -1 + i * 0.1, 0 + j * -0.05);
+						dash.position.set(width / -2 - 0.076, -1 + i * 0.1, 0 + j * -0.05);
 					}
 				}
 
@@ -316,45 +317,41 @@ export default class App extends React.Component {
 					for (let j = 0; j < statsF[i].length; j++) {
 						let width = (statsF[i][j] / max) * 3;
 						let dashGeom = new THREE.BoxGeometry(width, 0.1, 0.05);
-						let dashMat;
-						if (width > 2) {
-							dashMat = [
-								texShort,
-								texShort,
-								texLong,
-								texLong,
-								texLong,
-								texLong
-							];
-						} else if (width > 1) {
-							dashMat = [texShort, texShort, texMed, texMed, texMed, texMed];
-						} else if (width > 0.1) {
-							dashMat = [
-								texShort,
-								texShort,
-								texMedLow,
-								texMedLow,
-								texMedLow,
-								texMedLow
-							];
-						} else {
-							dashMat = [
-								texShort,
-								texShort,
-								texShort,
-								texShort,
-								texShort,
-								texShort
-							];
-						}
+						let dashMat = detTex(width);
 						let dash = new THREE.Mesh(dashGeom, dashMat);
 						group.add(dash);
-						dash.position.set(width / 2 + 0.015, -1 + i * 0.1, 0 + j * -0.05);
+						dash.position.set(width / 2 + 0.075, -1 + i * 0.1, 0 + j * -0.05);
 					}
 				}
-				var boundingBox = new THREE.Box3().setFromObject(group);
-				console.log();
 
+				// Add age indicators
+				const fontLoader = new THREE.FontLoader();
+				fontLoader.load("Comfortaa_Regular.json", (font) => {
+					console.log("Font loaded");
+					for (let i = 0; i < 101; i += 10) {
+						let text = new THREE.TextGeometry(i.toString(), {
+							font: font,
+							size: 0.05,
+							height: 0.01
+						});
+						let textMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+						let mesh = new THREE.Mesh(text, textMat);
+						group.add(mesh);
+						let meshX;
+						if (i === 0) {
+							meshX = -0.015;
+						} else if (i === 10) {
+							meshX = -0.029;
+						} else if (i === 100) {
+							meshX = -0.05;
+						} else {
+							meshX = -0.04;
+						}
+						mesh.position.set(meshX, -1.015 + i * 0.0198, 0.03);
+					}
+				});
+
+				var boundingBox = new THREE.Box3().setFromObject(group);
 				scene.add(group);
 				group.position.set(0, 0, boundingBox.getSize().z / 2 - 0.025);
 
