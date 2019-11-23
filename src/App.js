@@ -339,9 +339,9 @@ export default class App extends React.Component {
 						group.add(mesh);
 						let meshX;
 						if (i === 0) {
-							meshX = -0.015;
+							meshX = -0.02;
 						} else if (i === 10) {
-							meshX = -0.029;
+							meshX = -0.034;
 						} else if (i === 100) {
 							meshX = -0.05;
 						} else {
