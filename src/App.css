@@ -298,6 +298,22 @@ canvas {
 	cursor: grab;
 }
 
+#back {
+	position: absolute;
+	top: 1%;
+	left: 0%;
+	font-family: "Major Mono display";
+	z-index: -1;
+	cursor: pointer;
+	padding: 10px;
+}
+
+#back * {
+	text-transform: lowercase;
+	display: inline;
+	margin: 5px;
+}
+
 footer {
 	position: absolute;
 	bottom: 1%;

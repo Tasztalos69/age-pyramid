@@ -507,6 +507,15 @@ export default class App extends React.Component {
 						<Loading id='loader-form' />
 					</div>
 				</form>
+				<div
+					id='back'
+					onClick={() => {
+						window.location.reload();
+					}}
+				>
+					<i className='fas fa-chevron-left'></i>
+					<p>Modify query</p>
+				</div>
 				<footer>
 					<p>
 						Current Country: <b>{this.state.selectedCountry}</b>
