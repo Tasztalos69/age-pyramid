@@ -3,7 +3,6 @@ import "./App.css";
 import axios from "axios";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { SimplifyModifier } from "three/examples/jsm/modifiers/SimplifyModifier.js";
 import { ReactComponent as Loading } from "./loading.svg";
 import { ReactComponent as Search } from "./search.svg";
 
@@ -28,19 +27,17 @@ export default class App extends React.Component {
 		var config = {
 			headers: { Accept: "text/json" }
 		};
-		let cntUrl =
-				"https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5.F._T..M?startPeriod=1995&endPeriod=1995",
-			yrsUrl =
-				"https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5.F._T.001.M";
+		let initUrl =
+			"https://cors-anywhere.herokuapp.com/https://data.un.org/ws/rest/data/DF_UNData_WPP/SP_POP_TOTL.A.Y_LT5.F._T..M";
 
 		await axios
-			.get(cntUrl, config)
+			.get(initUrl, config)
 			.then((res) => {
 				let cnt = res.data.structure.dimensions.series.filter((prop) => {
 					return prop.id === "REF_AREA";
 				})[0].values;
-				this.setState({ countries: cnt });
-				console.log("Got countries");
+				let yrs = res.data.structure.dimensions.observation[0].values;
+				this.setState({ countries: cnt, years: yrs });
 			})
 			.catch((err) => {
 				console.error(err);
@@ -49,10 +46,6 @@ export default class App extends React.Component {
 				document.querySelector("#error").style.opacity = 1;
 			});
 
-		await axios.get(yrsUrl, config).then((res) => {
-			let yrs = res.data.structure.dimensions.observation[0].values;
-			this.setState({ years: yrs });
-		});
 		document.querySelector("#loader-main").style.opacity = 0;
 		setTimeout(() => {
 			document.querySelector("#loader-main").style.display = "none";
