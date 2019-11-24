@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/age-pyramid/precache-manifest.dfb02b5e865bcc4f801e2d6855e82515.js"
+  "/age-pyramid/precache-manifest.dd97659b2c7985fc3a2eea119e1d0e15.js"
 );
 
 self.addEventListener('message', (event) => {
