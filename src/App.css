@@ -372,6 +372,11 @@ footer hr {
 	margin: 10px 0;
 }
 
+.modalAbout p {
+	text-align: justify;
+	text-align-last: right;
+}
+
 @media only screen and (max-height: 1400px) {
 	.form-wrapper {
 		top: 60%;
