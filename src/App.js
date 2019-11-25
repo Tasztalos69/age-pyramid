@@ -63,7 +63,11 @@ export default class App extends React.Component {
 	searchCountry = (e) => {
 		document.querySelector(".cnt-list").style.opacity = 1;
 		this.setState({ countryInput: e.target.value });
-		if (e.target.value === null || e.target.value === "" || e.target.value === undefined) {
+		if (
+			e.target.value === null ||
+			e.target.value === "" ||
+			e.target.value === undefined
+		) {
 			this.setState({ matchedCountries: [] });
 		} else {
 			const regex = new RegExp(`^${e.target.value}`, "gi");
@@ -88,15 +92,19 @@ export default class App extends React.Component {
 			inputNum[0].style.border = "2px solid #ff0000";
 			inputNum[1].style.border = "2px solid #ff0000";
 			if (this.state.selectedCountry === null)
-				document.querySelector("#input-text").style.border = "2px solid #ff0000";
+				document.querySelector("#input-text").style.border =
+					"2px solid #ff0000";
 			setTimeout(() => {
-				document.querySelector("#input-text").style.border = "2px solid transparent";
+				document.querySelector("#input-text").style.border =
+					"2px solid transparent";
 				inputNum[0].style.border = "2px solid transparent";
 				inputNum[1].style.border = "2px solid transparent";
 			}, 300);
 		} else {
 			let minYear = parseInt(this.state.years[0].name);
-			let maxYear = parseInt(this.state.years[this.state.years.length - 1].name);
+			let maxYear = parseInt(
+				this.state.years[this.state.years.length - 1].name
+			);
 			if (
 				parseInt(this.state.yearStart) < minYear ||
 				parseInt(this.state.yearStart) > maxYear ||
@@ -156,7 +164,10 @@ export default class App extends React.Component {
 				}
 
 				// Create center separator
-				let lineZ = (parseInt(this.state.yearEnd) - parseInt(this.state.yearStart)) * 0.05 + 0.05;
+				let lineZ =
+					(parseInt(this.state.yearEnd) - parseInt(this.state.yearStart)) *
+						0.05 +
+					0.05;
 				const centerLineGeometry = new THREE.BoxGeometry(0.15, 2.1, lineZ);
 				const materialBlack = new THREE.MeshBasicMaterial({ color: 0x101010 });
 				const centerLine = new THREE.Mesh(centerLineGeometry, materialBlack);
@@ -166,7 +177,8 @@ export default class App extends React.Component {
 				const loopYears = (sex, observations, placement) => {
 					for (
 						let i = 0;
-						i < parseInt(this.state.yearEnd) - (parseInt(this.state.yearStart) - 1);
+						i <
+						parseInt(this.state.yearEnd) - (parseInt(this.state.yearStart) - 1);
 						i++
 					) {
 						let intake = observations[Object.keys(observations)[i]][0];
@@ -264,9 +276,23 @@ export default class App extends React.Component {
 					} else if (width > 1) {
 						dashMat = [texShort, texShort, texMed, texMed, texMed, texMed];
 					} else if (width > 0.05) {
-						dashMat = [texShort, texShort, texMedLow, texMedLow, texMedLow, texMedLow];
+						dashMat = [
+							texShort,
+							texShort,
+							texMedLow,
+							texMedLow,
+							texMedLow,
+							texMedLow
+						];
 					} else {
-						dashMat = [texShort, texShort, texShort, texShort, texShort, texShort];
+						dashMat = [
+							texShort,
+							texShort,
+							texShort,
+							texShort,
+							texShort,
+							texShort
+						];
 					}
 					return dashMat;
 				};
@@ -276,11 +302,15 @@ export default class App extends React.Component {
 					for (let j = 0; j < statsM[i].length; j++) {
 						if (statsM[i][j] > 0.01) {
 							let width = (statsM[i][j] / max) * 3;
-							let dashGeom = new THREE.BoxGeometry(width, 0.1, 0.05);
+							let dashGeom = new THREE.BoxBufferGeometry(width, 0.1, 0.05);
 							let dashMat = detTex(width);
 							let dash = new THREE.Mesh(dashGeom, dashMat);
 							group.add(dash);
-							dash.position.set(width / -2 - 0.076, -1 + i * 0.1, 0 + j * -0.05);
+							dash.position.set(
+								width / -2 - 0.076,
+								-1 + i * 0.1,
+								0 + j * -0.05
+							);
 						}
 					}
 				}
@@ -290,7 +320,7 @@ export default class App extends React.Component {
 					for (let j = 0; j < statsF[i].length; j++) {
 						if (statsF[i][j] > 0.01) {
 							let width = (statsF[i][j] / max) * 3;
-							let dashGeom = new THREE.BoxGeometry(width, 0.1, 0.05);
+							let dashGeom = new THREE.BoxBufferGeometry(width, 0.1, 0.05);
 							let dashMat = detTex(width);
 							let dash = new THREE.Mesh(dashGeom, dashMat);
 							group.add(dash);
@@ -411,7 +441,9 @@ export default class App extends React.Component {
 									return (
 										<li
 											className={`cnt-list__li ${
-												this.state.selectedCountry === cnt.name ? "cnt-list__li-active" : ""
+												this.state.selectedCountry === cnt.name
+													? "cnt-list__li-active"
+													: ""
 											}`}
 											key={cnt.id}
 											onClick={() => {
@@ -430,7 +462,9 @@ export default class App extends React.Component {
 								})}
 							</ul>
 						</div>
-						<p style={{ opacity: this.state.selectedCountryId !== null ? 1 : 0 }}>
+						<p
+							style={{ opacity: this.state.selectedCountryId !== null ? 1 : 0 }}
+						>
 							2. Specify start and end years
 						</p>
 						<div
@@ -464,7 +498,10 @@ export default class App extends React.Component {
 						<button
 							onClick={this.initGraph.bind(this)}
 							style={{
-								opacity: this.state.yearStart !== "" && this.state.yearEnd !== "" ? 1 : 0
+								opacity:
+									this.state.yearStart !== "" && this.state.yearEnd !== ""
+										? 1
+										: 0
 							}}
 						>
 							Submit
@@ -543,40 +580,63 @@ export default class App extends React.Component {
 						</u>
 					</p>
 				</footer>
-				<div className='modals modalDb' style={{ opacity: this.state.modalDb ? 1 : 0 }}>
+				<div
+					className='modals modalDb'
+					style={{ opacity: this.state.modalDb ? 1 : 0 }}
+				>
 					<p>
-						Database used: <a href={"https://data.un.org"}>https://data.un.org</a>
+						Database used:{" "}
+						<a href={"https://data.un.org"}>https://data.un.org</a>
 					</p>
 				</div>
-				<div className='modals modalTech' style={{ opacity: this.state.modalTech ? 1 : 0 }}>
+				<div
+					className='modals modalTech'
+					style={{ opacity: this.state.modalTech ? 1 : 0 }}
+				>
 					<h3>Technology used:</h3>
 					<ul>
 						<li>
 							Framework:{" "}
-							<a target='_blank' rel='noopener noreferrer' href='https://reactjs.org'>
+							<a
+								target='_blank'
+								rel='noopener noreferrer'
+								href='https://reactjs.org'
+							>
 								React
 							</a>
 						</li>
 
 						<li>
 							Renderer:{" "}
-							<a target='_blank' rel='noopener noreferrer' href='https://threejs.org'>
+							<a
+								target='_blank'
+								rel='noopener noreferrer'
+								href='https://threejs.org'
+							>
 								Three js
 							</a>
 						</li>
 						<li>
 							Requests:{" "}
-							<a target='_blank' rel='noopener noreferrer' href='https://github.com/axios/axios'>
+							<a
+								target='_blank'
+								rel='noopener noreferrer'
+								href='https://github.com/axios/axios'
+							>
 								Axios
 							</a>
 						</li>
 					</ul>
 				</div>
-				<div className='modals modalAbout' style={{ opacity: this.state.modalAbout ? 1 : 0 }}>
+				<div
+					className='modals modalAbout'
+					style={{ opacity: this.state.modalAbout ? 1 : 0 }}
+				>
 					<p>
-						Age pyramid visualizer is a tool, which draws the age pyramids of a country (or regions)
-						in a specific time range, one after another. It's aim is to help the students and
-						teachers understand the changes of a country's population.
+						Age pyramid visualizer is a tool, which draws the age pyramids of a
+						country (or regions) in a specific time range, one after another.
+						It's aim is to help the students and teachers understand the changes
+						of a country's population.
 					</p>
 				</div>
 			</div>
