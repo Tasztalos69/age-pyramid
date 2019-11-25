@@ -146,6 +146,22 @@ export default class App extends React.Component {
 				document.body.appendChild(renderer.domElement);
 				camera.position.z = 5;
 
+				// Create center separator
+				let lineZ =
+					(parseInt(this.state.yearEnd) - parseInt(this.state.yearStart)) *
+						0.05 +
+					0.05;
+				const centerLineGeometry = new THREE.BoxGeometry(0.15, 2.1, lineZ);
+				const materialBlack = new THREE.MeshBasicMaterial({ color: 0x101010 });
+				const centerLine = new THREE.Mesh(centerLineGeometry, materialBlack);
+				scene.add(centerLine);
+
+				// Create bottom inforgaphic
+				const bottomGeometry = new THREE.BoxGeometry(6.15, 0.2, 0.05);
+				const bottom = new THREE.Mesh(bottomGeometry, materialBlack);
+				group.add(bottom);
+				bottom.position.set(0, -1.15, 0);
+
 				//----------------------
 				// Create pyramid
 				//----------------------
@@ -162,16 +178,6 @@ export default class App extends React.Component {
 					statsM[i] = [];
 					statsF[i] = [];
 				}
-
-				// Create center separator
-				let lineZ =
-					(parseInt(this.state.yearEnd) - parseInt(this.state.yearStart)) *
-						0.05 +
-					0.05;
-				const centerLineGeometry = new THREE.BoxGeometry(0.15, 2.1, lineZ);
-				const materialBlack = new THREE.MeshBasicMaterial({ color: 0x101010 });
-				const centerLine = new THREE.Mesh(centerLineGeometry, materialBlack);
-				scene.add(centerLine);
 
 				// Year loop fn
 				const loopYears = (sex, observations, placement) => {
@@ -249,7 +255,7 @@ export default class App extends React.Component {
 					return Math.max.apply(Math, row);
 				});
 				var maxM = Math.max.apply(null, maxRowM);
-				var maxRowF = statsM.map((row) => {
+				var maxRowF = statsF.map((row) => {
 					return Math.max.apply(Math, row);
 				});
 				var maxF = Math.max.apply(null, maxRowF);
@@ -329,16 +335,18 @@ export default class App extends React.Component {
 					}
 				}
 
-				// Add age indicators
+				// Display text-based information
 				const fontLoader = new THREE.FontLoader();
 				fontLoader.load("Comfortaa_Regular.json", (font) => {
+					let textMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+					// Add age indicators
 					for (let i = 0; i < 101; i += 10) {
 						let text = new THREE.TextGeometry(i.toString(), {
 							font: font,
 							size: 0.05,
 							height: 0.01
 						});
-						let textMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
 						let mesh = new THREE.Mesh(text, textMat);
 						group.add(mesh);
 						let meshX;
@@ -353,10 +361,72 @@ export default class App extends React.Component {
 						}
 						mesh.position.set(meshX, -1.015 + i * 0.0198, 0.03);
 					}
+					// Draw male & female indicator
+					let male = new THREE.TextGeometry("Male", {
+						font: font,
+						size: 0.05,
+						height: 0.01
+					});
+					let female = new THREE.TextGeometry("Female", {
+						font: font,
+						size: 0.05,
+						height: 0.01
+					});
+					male.center();
+					female.center();
+					let meshMale = new THREE.Mesh(male, textMat);
+					let meshFemale = new THREE.Mesh(female, textMat);
+					group.add(meshMale);
+					group.add(meshFemale);
+					meshMale.position.set(-1.5, -1.2, 0.03);
+					meshFemale.position.set(1.5, -1.2, 0.03);
+
+					// Draw population
+					let maxMGeom = new THREE.TextGeometry(maxM.toString(), {
+						font: font,
+						size: 0.05,
+						height: 0.01
+					});
+					let maxFGeom = new THREE.TextGeometry(maxF.toString(), {
+						font: font,
+						size: 0.05,
+						height: 0.01
+					});
+					console.log(maxFGeom.parameters);
+
+					let halfMGeom = new THREE.TextGeometry((maxM / 2).toString(), {
+						font: font,
+						size: 0.05,
+						height: 0.01
+					});
+					halfMGeom.center();
+					let halfFGeom = new THREE.TextGeometry((maxF / 2).toString(), {
+						font: font,
+						size: 0.05,
+						height: 0.01
+					});
+					halfFGeom.center();
+					let zeroGeom = new THREE.TextGeometry("0", {
+						font: font,
+						size: 0.05,
+						height: 0.01
+					});
+					zeroGeom.center();
+					let meshMaxM = new THREE.Mesh(maxMGeom, textMat);
+					let meshMaxF = new THREE.Mesh(maxFGeom, textMat);
+					let meshHalfM = new THREE.Mesh(halfMGeom, textMat);
+					let meshHalfF = new THREE.Mesh(halfFGeom, textMat);
+					let meshZero = new THREE.Mesh(zeroGeom, textMat);
+					group.add(meshMaxM, meshMaxF, meshHalfM, meshHalfF, meshZero);
+					meshMaxM.position.set(-3, -1.12, 0.03);
+					meshMaxF.position.set(2.7, -1.12, 0.03);
+					meshHalfM.position.set(-1.5, -1.1, 0.03);
+					meshHalfF.position.set(1.5, -1.1, 0.03);
+					meshZero.position.set(0, -1.1, 0.03);
 				});
 
-				var boundingBox = new THREE.Box3().setFromObject(group);
 				scene.add(group);
+				var boundingBox = new THREE.Box3().setFromObject(group);
 				group.position.set(0, 0, boundingBox.getSize().z / 2 - 0.025);
 
 				// Add Orbit controller
@@ -570,7 +640,7 @@ export default class App extends React.Component {
 						<u
 							onClick={() => {
 								this.setState({
-									modalAbout: !this.state.modalTech,
+									modalAbout: !this.state.modalAbout,
 									modalDb: false,
 									modalTech: false
 								});
