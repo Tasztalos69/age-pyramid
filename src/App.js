@@ -1,10 +1,11 @@
 import React from "react";
-import "./App.css";
 import axios from "axios";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { ReactComponent as Loading } from "./loading.svg";
 import { ReactComponent as Search } from "./search.svg";
+import ReactTooltip from "react-tooltip";
+import "./App.css";
 
 export default class App extends React.Component {
 	constructor(props) {
@@ -153,6 +154,7 @@ export default class App extends React.Component {
 					0.05;
 				const centerLineGeometry = new THREE.BoxGeometry(0.15, 2.1, lineZ);
 				const materialBlack = new THREE.MeshBasicMaterial({ color: 0x101010 });
+				const materialWhite = new THREE.MeshBasicMaterial({ color: 0xffffff });
 				const centerLine = new THREE.Mesh(centerLineGeometry, materialBlack);
 				scene.add(centerLine);
 
@@ -161,6 +163,12 @@ export default class App extends React.Component {
 				const bottom = new THREE.Mesh(bottomGeometry, materialBlack);
 				group.add(bottom);
 				bottom.position.set(0, -1.15, 0);
+
+				// Create bottom white separator
+				const bottomLineGeometry = new THREE.BoxGeometry(6.15, 0.005, 0.005);
+				const bottomLine = new THREE.Mesh(bottomLineGeometry, materialWhite);
+				group.add(bottomLine);
+				bottomLine.position.set(0, -1.15, 0.025);
 
 				//----------------------
 				// Create pyramid
@@ -347,19 +355,10 @@ export default class App extends React.Component {
 							size: 0.05,
 							height: 0.01
 						});
+						text.center();
 						let mesh = new THREE.Mesh(text, textMat);
 						group.add(mesh);
-						let meshX;
-						if (i === 0) {
-							meshX = -0.02;
-						} else if (i === 10) {
-							meshX = -0.034;
-						} else if (i === 100) {
-							meshX = -0.05;
-						} else {
-							meshX = -0.04;
-						}
-						mesh.position.set(meshX, -1.015 + i * 0.0198, 0.03);
+						mesh.position.set(0, -1 + i * 0.02, 0.03);
 					}
 					// Draw male & female indicator
 					let male = new THREE.TextGeometry("Male", {
@@ -392,7 +391,6 @@ export default class App extends React.Component {
 						size: 0.05,
 						height: 0.01
 					});
-					console.log(maxFGeom.parameters);
 
 					let halfMGeom = new THREE.TextGeometry((maxM / 2).toString(), {
 						font: font,
@@ -417,12 +415,21 @@ export default class App extends React.Component {
 					let meshHalfM = new THREE.Mesh(halfMGeom, textMat);
 					let meshHalfF = new THREE.Mesh(halfFGeom, textMat);
 					let meshZero = new THREE.Mesh(zeroGeom, textMat);
-					group.add(meshMaxM, meshMaxF, meshHalfM, meshHalfF, meshZero);
+					let meshZero2 = meshZero.clone();
+					group.add(
+						meshMaxM,
+						meshMaxF,
+						meshHalfM,
+						meshHalfF,
+						meshZero,
+						meshZero2
+					);
 					meshMaxM.position.set(-3, -1.12, 0.03);
 					meshMaxF.position.set(2.7, -1.12, 0.03);
 					meshHalfM.position.set(-1.5, -1.1, 0.03);
 					meshHalfF.position.set(1.5, -1.1, 0.03);
-					meshZero.position.set(0, -1.1, 0.03);
+					meshZero.position.set(0.15, -1.1, 0.03);
+					meshZero2.position.set(-0.15, -1.1, 0.03);
 				});
 
 				scene.add(group);
@@ -472,6 +479,7 @@ export default class App extends React.Component {
 	render() {
 		return (
 			<div className='App'>
+				<ReactTooltip effect='solid' place='right' type='dark' />
 				<div id='error'>
 					<p>An error ocurred.</p>
 					<button
@@ -531,6 +539,10 @@ export default class App extends React.Component {
 									);
 								})}
 							</ul>
+							<i
+								className='fas fa-info-circle'
+								data-tip='Type in the country or region whose pyramids you want to display.'
+							></i>
 						</div>
 						<p
 							style={{ opacity: this.state.selectedCountryId !== null ? 1 : 0 }}
@@ -561,9 +573,14 @@ export default class App extends React.Component {
 								className='input-number'
 							/>
 							<p className='years-minmax'>
-								min: {this.state.years[0].name} - max:{" "}
-								{this.state.years[this.state.years.length - 1].name}
+								Available years: {this.state.years[0].name} -{" "}
+								{this.state.years[this.state.years.length - 1].name} | Max
+								timespan: 75 years
 							</p>
+							<i
+								className='fas fa-info-circle'
+								data-tip='Type in the start and the end date of the pyramids.'
+							></i>
 						</div>
 						<button
 							onClick={this.initGraph.bind(this)}
