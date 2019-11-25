@@ -107,11 +107,12 @@ export default class App extends React.Component {
 				this.state.years[this.state.years.length - 1].name
 			);
 			if (
-				parseInt(this.state.yearStart) < minYear ||
-				parseInt(this.state.yearStart) > maxYear ||
-				parseInt(this.state.yearEnd) < minYear ||
-				parseInt(this.state.yearEnd) > maxYear ||
-				parseInt(this.state.yearEnd) - parseInt(this.state.yearStart) > 75
+				+this.state.yearStart < minYear ||
+				+this.state.yearStart > maxYear ||
+				+this.state.yearEnd < minYear ||
+				+this.state.yearEnd > maxYear ||
+				+this.state.yearEnd - +this.state.yearStart > 75 ||
+				+this.state.yearStart > +this.state.yearEnd
 			) {
 				let inputNum = document.querySelectorAll(".input-number");
 				document.querySelector(".years-minmax").style.color = "red";
