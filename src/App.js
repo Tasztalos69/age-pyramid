@@ -121,7 +121,7 @@ export default class App extends React.Component {
 					inputNum[0].style.border = "2px solid transparent";
 					inputNum[1].style.border = "2px solid transparent";
 					document.querySelector(".years-minmax").style.color = "black";
-				}, 600);
+				}, 800);
 			} else {
 				// Show loading indicator
 				document.querySelector("#loader-form").style.opacity = 1;
