@@ -153,20 +153,28 @@ export default class App extends React.Component {
 					(parseInt(this.state.yearEnd) - parseInt(this.state.yearStart)) *
 						0.05 +
 					0.05;
-				const centerLineGeometry = new THREE.BoxGeometry(0.15, 2.1, lineZ);
+				const centerLineGeometry = new THREE.BoxBufferGeometry(
+					0.15,
+					2.1,
+					lineZ
+				);
 				const materialBlack = new THREE.MeshBasicMaterial({ color: 0x101010 });
 				const materialWhite = new THREE.MeshBasicMaterial({ color: 0xffffff });
 				const centerLine = new THREE.Mesh(centerLineGeometry, materialBlack);
 				scene.add(centerLine);
 
 				// Create bottom inforgaphic
-				const bottomGeometry = new THREE.BoxGeometry(6.15, 0.2, 0.05);
+				const bottomGeometry = new THREE.BoxBufferGeometry(6.15, 0.2, 0.05);
 				const bottom = new THREE.Mesh(bottomGeometry, materialBlack);
 				group.add(bottom);
 				bottom.position.set(0, -1.15, 0);
 
 				// Create bottom white separator
-				const bottomLineGeometry = new THREE.BoxGeometry(6.15, 0.005, 0.005);
+				const bottomLineGeometry = new THREE.BoxBufferGeometry(
+					6.15,
+					0.005,
+					0.005
+				);
 				const bottomLine = new THREE.Mesh(bottomLineGeometry, materialWhite);
 				group.add(bottomLine);
 				bottomLine.position.set(0, -1.15, 0.025);
@@ -351,7 +359,7 @@ export default class App extends React.Component {
 
 					// Add age indicators
 					for (let i = 0; i < 101; i += 10) {
-						let text = new THREE.TextGeometry(i.toString(), {
+						let text = new THREE.TextBufferGeometry(i.toString(), {
 							font: font,
 							size: 0.05,
 							height: 0.01
@@ -362,12 +370,12 @@ export default class App extends React.Component {
 						mesh.position.set(0, -1 + i * 0.02, 0.03);
 					}
 					// Draw male & female indicator
-					let male = new THREE.TextGeometry("Male", {
+					let male = new THREE.TextBufferGeometry("Male", {
 						font: font,
 						size: 0.05,
 						height: 0.01
 					});
-					let female = new THREE.TextGeometry("Female", {
+					let female = new THREE.TextBufferGeometry("Female", {
 						font: font,
 						size: 0.05,
 						height: 0.01
@@ -382,30 +390,30 @@ export default class App extends React.Component {
 					meshFemale.position.set(1.5, -1.2, 0.03);
 
 					// Draw population
-					let maxMGeom = new THREE.TextGeometry(maxM.toString(), {
+					let maxMGeom = new THREE.TextBufferGeometry(maxM.toString(), {
 						font: font,
 						size: 0.05,
 						height: 0.01
 					});
-					let maxFGeom = new THREE.TextGeometry(maxF.toString(), {
+					let maxFGeom = new THREE.TextBufferGeometry(maxF.toString(), {
 						font: font,
 						size: 0.05,
 						height: 0.01
 					});
 
-					let halfMGeom = new THREE.TextGeometry((maxM / 2).toString(), {
+					let halfMGeom = new THREE.TextBufferGeometry((maxM / 2).toString(), {
 						font: font,
 						size: 0.05,
 						height: 0.01
 					});
 					halfMGeom.center();
-					let halfFGeom = new THREE.TextGeometry((maxF / 2).toString(), {
+					let halfFGeom = new THREE.TextBufferGeometry((maxF / 2).toString(), {
 						font: font,
 						size: 0.05,
 						height: 0.01
 					});
 					halfFGeom.center();
-					let zeroGeom = new THREE.TextGeometry("0", {
+					let zeroGeom = new THREE.TextBufferGeometry("0", {
 						font: font,
 						size: 0.05,
 						height: 0.01
